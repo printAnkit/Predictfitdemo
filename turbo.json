@@ -3,8 +3,13 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
       "env": [
         "NEXT_PUBLIC_APP_URL",
         "BETTER_AUTH_SECRET",
@@ -44,23 +49,41 @@
         "AWS_ACCESS_KEY_ID",
         "AWS_SECRET_ACCESS_KEY",
         "OPEN_WEARABLES_API_URL",
-        "NEXT_PUBLIC_OPEN_WEARABLES_API_URL"
+        "NEXT_PUBLIC_OPEN_WEARABLES_API_URL",
+        "DIRECT_URL",
+        "DEMO_MODE",
+        "NEXT_PUBLIC_DEMO_MODE",
+        "NEXT_PUBLIC_DEMO_PASSWORD",
+        "CRON_SECRET",
+        "META_PAGE_ACCESS_TOKEN",
+        "WHATSAPP_WABA_ID",
+        "WHATSAPP_APP_ID",
+        "NEXT_PUBLIC_CLINIC_URL",
+        "NEXT_PUBLIC_OPERATIONS_URL",
+        "NEXT_PUBLIC_PATIENT_URL",
+        "NEXT_PUBLIC_LAB_URL",
+        "REDIS_URL"
       ],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ]
     },
-
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
-
     "format": {
-      "dependsOn": ["^format"]
+      "dependsOn": [
+        "^format"
+      ]
     },
-
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": [
+        "^typecheck"
+      ]
     },
-
     "dev": {
       "cache": false,
       "persistent": true
