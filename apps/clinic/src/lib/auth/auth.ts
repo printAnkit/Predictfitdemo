@@ -7,11 +7,12 @@ import { adminAc, userAc } from "better-auth/plugins/admin/access";
 import { ADMIN_ROLES, ALL_ROLES, isAdminRole } from "@workspace/db/roles";
 import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { demoTrustedOrigins } from "@workspace/db/demo-env";
 
 export const auth = betterAuth({
   // The lab answers on its own host (lab.predict.fit) from this same app;
   // sign-in there is a request from that origin, which must be trusted.
-  trustedOrigins: process.env.NEXT_PUBLIC_LAB_URL ? [process.env.NEXT_PUBLIC_LAB_URL] : [],
+  trustedOrigins: [...(process.env.NEXT_PUBLIC_LAB_URL ? [process.env.NEXT_PUBLIC_LAB_URL] : []), ...demoTrustedOrigins()],
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {

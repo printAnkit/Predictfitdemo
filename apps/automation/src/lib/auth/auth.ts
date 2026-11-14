@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { demoTrustedOrigins } from "@workspace/db/demo-env";
 import { createAccessControl } from "better-auth/plugins/access";
 import { defaultStatements, adminAc, userAc } from "better-auth/plugins/admin/access";
 import { ADMIN_ROLES, ALL_ROLES, isAdminRole } from "@workspace/db/roles";
@@ -43,6 +44,7 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL,
     "http://localhost:3000",
     "http://localhost:3001",
+    ...demoTrustedOrigins(),
   ].filter((origin): origin is string => Boolean(origin)),
   plugins: [
     nextCookies(),

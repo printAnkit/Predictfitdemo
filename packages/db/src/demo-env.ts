@@ -45,3 +45,23 @@ if (!process.env.BETTER_AUTH_URL && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
 }
 
 export const DEMO_DEFAULT_KEYS = Object.keys(DEMO_DEFAULTS);
+
+/**
+ * Origins sign-in accepts in the demo: every Vercel address (production,
+ * previews, a renamed project) and the three apps' own addresses. Without it
+ * a project renamed in Vercel — a new .vercel.app domain — refused every
+ * sign-in with "Invalid origin".
+ */
+export function demoTrustedOrigins(): string[] {
+  return [
+    "https://*.vercel.app",
+    process.env.BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_PATIENT_URL,
+    process.env.NEXT_PUBLIC_OPERATIONS_URL,
+    process.env.NEXT_PUBLIC_CLINIC_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+    process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : undefined,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined,
+  ].filter((o): o is string => Boolean(o));
+}
