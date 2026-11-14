@@ -101,7 +101,7 @@ function demoSpend(adIds: string[], days: number | null): Map<string, AdSpend> {
 
 /** Spend per ad id, for the ads given, grouped by their ad account. */
 export async function metaAdSpend(ads: { adId: string; accountId: string }[], days: number | null): Promise<Map<string, AdSpend>> {
-  if (process.env.DEMO_MODE === "1") return demoSpend(ads.map((a) => a.adId), days);
+  if (process.env.DEMO_MODE !== "0") return demoSpend(ads.map((a) => a.adId), days);
   const out = new Map<string, AdSpend>();
   const token = process.env.META_PAGE_ACCESS_TOKEN;
   if (!token || ads.length === 0) return out;

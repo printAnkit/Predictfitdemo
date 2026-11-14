@@ -33,7 +33,21 @@ function devOrigins(): string[] {
 }
 
 
+/**
+ * Zero-config demo: the addresses the browser needs, written into the build.
+ * The server fills its own defaults (packages/db/src/demo-env.ts); the browser
+ * cannot see those, so the ones it uses go here. A real variable still wins.
+ */
+const DEMO_PUBLIC_ENV = {
+  NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE ?? "1",
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? "https://predictfitdemo.vercel.app",
+  NEXT_PUBLIC_PATIENT_URL: process.env.NEXT_PUBLIC_PATIENT_URL ?? "https://predictfitdemo.vercel.app",
+  NEXT_PUBLIC_OPERATIONS_URL: process.env.NEXT_PUBLIC_OPERATIONS_URL ?? "https://predictfitdemo-ops.vercel.app",
+  NEXT_PUBLIC_CLINIC_URL: process.env.NEXT_PUBLIC_CLINIC_URL ?? "https://predictfitdemo-clinic.vercel.app",
+}
+
 const nextConfig: NextConfig = {
+  env: DEMO_PUBLIC_ENV,
   allowedDevOrigins: devOrigins(),
   transpilePackages: ["@workspace/ui"],
 }

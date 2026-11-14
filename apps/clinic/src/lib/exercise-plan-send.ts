@@ -84,7 +84,7 @@ const MIN_PDF_BYTES = 10_000
 export async function exercisePlanPdf(contactId: string, patientName: string): Promise<string> {
   // Demo: no Chromium on Vercel, and nothing is really sent — the sheet's own
   // page stands in for the PDF.
-  if (process.env.DEMO_MODE === "1") {
+  if (process.env.DEMO_MODE !== "0") {
     return `${(process.env.NEXT_PUBLIC_CLINIC_URL ?? "").replace(/\/$/, "")}/e/${exercisePlanToken(contactId)}/sheet?for=${encodeURIComponent(patientName)}`
   }
   return oneAtATime(async () => {

@@ -27,6 +27,7 @@ import {
   user,
 } from "./schema";
 import { DEFAULT_GRANTS, PERMISSION_KEYS } from "./permissions";
+import { seedDemoPatient } from "./demo-patient";
 
 /**
  * The demo's fictional world — two clinics, a staff team, ~300 leads from a
@@ -119,8 +120,23 @@ async function wipe(db: Database) {
 }
 
 export async function seedDemo(db: Database): Promise<Record<string, number>> {
-  if (process.env.DEMO_MODE !== "1") {
-    throw new Error("Refusing to seed: DEMO_MODE is not 1. This wipes the database — demo databases only.");
+  // This wipes the database first. Demo mode is on by default in this repo, so
+  // that alone is no protection — the database itself must say it is a demo.
+  if (process.env.DEMO_MODE === "0") {
+    throw new Error("Refusing to seed: DEMO_MODE is 0.");
+  }
+  const target = (() => {
+    try {
+      return new URL(process.env.DATABASE_URL ?? "").pathname.replace(/^\//, "");
+    } catch {
+      return "";
+    }
+  })();
+  if (!/demo/i.test(target) && process.env.DEMO_SEED_FORCE !== "1") {
+    throw new Error(
+      `Refusing to seed "${target || "unknown database"}": the database name must contain "demo". ` +
+        "This wipes every table — set DEMO_SEED_FORCE=1 only if this really is a throwaway database.",
+    );
   }
   state = 20261114;
   const now = Date.now();
@@ -169,6 +185,9 @@ export async function seedDemo(db: Database): Promise<Record<string, number>> {
     await db.insert(account).values({ id: randomUUID(), accountId: id, providerId: "credential", userId: id, password: hash, createdAt: at(100 * DAY), updatedAt: at(100 * DAY) });
     for (const c of s.clinics) await db.insert(clinicMember).values({ clinicId: c, userId: id, role: s.role, createdAt: at(100 * DAY) });
   }
+
+  // ── the patient site's demo patient: catalogue, blood panel, biological age
+  const patientSeed = await seedDemoPatient(db, { clinicId: physioId, passwordHash: hash, now });
 
   // ── catalogue: medicines, plans, templates, flows ───────────────────────────
   const medIds = MEDICINES.map(() => randomUUID());
@@ -426,5 +445,5 @@ export async function seedDemo(db: Database): Promise<Record<string, number>> {
   await write(medicineSaleLine, B.saleLines);
   await write(payment, B.payments);
 
-  return counts;
+  return { ...counts, demoPatientReadings: patientSeed.readings, demoPatientScored: patientSeed.scored ? 1 : 0 };
 }

@@ -15,7 +15,8 @@
  */
 
 export function isDemo(): boolean {
-  return process.env.DEMO_MODE === "1" || process.env.NEXT_PUBLIC_DEMO_MODE === "1";
+  // On unless switched off: this repo is the demo, and it runs with no settings.
+  return process.env.DEMO_MODE !== "0";
 }
 
 /** Hosts a demo must never reach. Anything else (the database, Vercel) passes. */

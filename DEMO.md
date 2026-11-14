@@ -32,6 +32,7 @@ All use the password `predict-demo-2026` (or `NEXT_PUBLIC_DEMO_PASSWORD`), and t
 | Front desk | `desk@demo.predict.fit` | Clinic |
 | Doctor | `doctor@demo.predict.fit` | Clinic |
 | Predict (diagnosis) | `predict@demo.predict.fit` | Clinic |
+| Demo patient | `patient@demo.predict.fit` | Patient site — biological age, domains, biomarkers |
 
 ## Run it locally
 
@@ -46,40 +47,31 @@ pnpm --filter automation dev                                  # http://localhost
 pnpm --filter clinic dev                                      # http://localhost:3002/auth/login
 ```
 
-## Deploy on Vercel
+## Deploy on Vercel — no settings needed
 
-One Git repo, **one Vercel project per app**. For each of `apps/automation` and `apps/clinic`
-(and `apps/web` if you want the patient site):
+The repo carries working defaults for everything (packages/db/src/demo-env.ts and each app's next.config.ts):
+demo mode on, the demo database (a Neon login that can open **only** the `predict_demo` database), a session
+secret, dummy keys, and the three apps' addresses. **No environment variables are required.**
 
-1. **New Project** → import this repo.
-2. **Root Directory**: `apps/automation` (or `apps/clinic`, `apps/web`). Framework: Next.js.
-   Vercel detects pnpm and the workspace; leave the build command as `next build`.
-3. **Environment variables** (same database for all three projects):
+Make one Vercel project per app, all from this repo, with these **project names** (the name decides the
+`.vercel.app` address, and the apps link to each other by these addresses):
 
-| Variable | Value |
-|---|---|
-| `DATABASE_URL` | Demo database, **pooled** URL (Neon: the `-pooler` host) |
-| `DIRECT_URL` | Demo database, direct URL |
-| `DEMO_MODE` | `1` |
-| `NEXT_PUBLIC_DEMO_MODE` | `1` |
-| `BETTER_AUTH_SECRET` | a long random string (same in all three projects) |
-| `BETTER_AUTH_URL` | this project's own URL, e.g. `https://predict-ops-demo.vercel.app` |
-| `NEXT_PUBLIC_OPERATIONS_URL` | the Operations project's URL |
-| `NEXT_PUBLIC_CLINIC_URL` | the Clinic project's URL |
-| `NEXT_PUBLIC_PATIENT_URL` / `NEXT_PUBLIC_APP_URL` | the patient site's URL (or the clinic URL if you skip it) |
-| `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_WABA_ID`, `WHATSAPP_APP_ID`, `META_PAGE_ACCESS_TOKEN` | `demo` (dummy — the guard answers) |
-| `EMAIL_PROVIDER` / `RESEND_API_KEY` / `EMAIL_FROM` | `resend` / `demo` / `Predict Demo <demo@example.com>` |
-| `CRON_SECRET` | a random string — **Operations project only** (protects the nightly reset) |
+| Vercel project name | Root Directory | Opens as |
+|---|---|---|
+| `predictfitdemo` | `apps/web` | https://predictfitdemo.vercel.app (patient dashboard) |
+| `predictfitdemo-ops` | `apps/automation` | https://predictfitdemo-ops.vercel.app/login |
+| `predictfitdemo-clinic` | `apps/clinic` | https://predictfitdemo-clinic.vercel.app/auth/login |
 
-   **Never** put real keys (WhatsApp, Meta, AWS, Resend) or a production database URL in a demo project.
+New Project → import the repo → set the name and Root Directory → Deploy. That is all. The database is already
+seeded, and the Ops project's cron re-seeds it nightly.
 
-4. Deploy. Then seed once from your machine (`pnpm --filter @workspace/db demo:seed` with the demo database in
-   `packages/db/.env`), or call the reset endpoint below.
+Optional: a different name or a custom domain — set `NEXT_PUBLIC_APP_URL` / `NEXT_PUBLIC_PATIENT_URL`,
+`NEXT_PUBLIC_OPERATIONS_URL` and `NEXT_PUBLIC_CLINIC_URL` to the real addresses in all three projects. Any
+variable you set wins over the built-in default. `CRON_SECRET` (Ops) makes only Vercel able to trigger the reset.
 
 ### Nightly reset
 
-`apps/automation/vercel.json` schedules `GET /api/demo/reset` at 21:30 UTC (03:00 IST). With `CRON_SECRET` set,
-Vercel sends it as a bearer token; the route wipes the demo database and re-seeds it, shifted to the current date.
+`apps/automation/vercel.json` schedules `GET /api/demo/reset` at 21:30 UTC (03:00 IST). Vercel's cron is let in by its user agent (or, with `CRON_SECRET` set, only by that bearer token); the route wipes the demo database and re-seeds it, shifted to the current date.
 To reset by hand:
 
 ```bash

@@ -54,7 +54,7 @@ function shape(ad: GraphAd): AdLinks {
 export async function metaAdLinks(adIds: string[]): Promise<Map<string, AdLinks>> {
   // Demo: every seeded ad gets a thumbnail and a status, and no outside link
   // that would lead to a real account. The account id lets spend be "read".
-  if (process.env.DEMO_MODE === "1") {
+  if (process.env.DEMO_MODE !== "0") {
     const thumbs = ["/images/running.png", "/predict-icon.svg"];
     return new Map(
       [...new Set(adIds)].map((id, i) => [

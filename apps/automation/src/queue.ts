@@ -28,6 +28,6 @@ const demoQueue = {
 } as unknown as Queue<FlowJob>;
 
 export const flowQueue: Queue<FlowJob> =
-  process.env.DEMO_MODE === "1"
+  process.env.DEMO_MODE !== "0"
     ? demoQueue
     : new Queue<FlowJob>("automation-flow", { connection: redisConnection });

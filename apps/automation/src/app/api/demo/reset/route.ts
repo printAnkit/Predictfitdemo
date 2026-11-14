@@ -19,10 +19,14 @@ export const dynamic = "force-dynamic"
 export async function GET(req: Request) {
   if (!isDemo()) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
+  // With CRON_SECRET set, Vercel sends it as a bearer token and nothing else
+  // may reset. Without it (the zero-config deploy) Vercel's own cron is let in
+  // by its user agent — the worst a spoofed call can do is reset fictional data.
   const secret = process.env.CRON_SECRET
-  if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  const allowed = secret
+    ? req.headers.get("authorization") === `Bearer ${secret}`
+    : (req.headers.get("user-agent") ?? "").startsWith("vercel-cron/")
+  if (!allowed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const started = Date.now()
   const counts = await seedDemo(db)

@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "./src/demo-env";
 import { defineConfig } from "drizzle-kit";
 
 // Migrations and DDL must not go through the transaction-mode pooler — it

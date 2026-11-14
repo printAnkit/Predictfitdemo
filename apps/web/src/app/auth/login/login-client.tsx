@@ -7,6 +7,8 @@ import LoginForm from "@/src/components/auth/login-form";
 import { Card, CardContent } from "@workspace/ui/components/card";
 import EmailOtpForm from "@/src/components/auth/email-otp";
 import PhoneOtpForm from "@/src/components/auth/phone-otp";
+import { DemoSignIn } from "@workspace/ui/components/demo-mode";
+import { authClient } from "@/src/lib/auth/auth-client";
 
 type Mode = "phone" | "password" | "email";
 
@@ -32,6 +34,18 @@ export default function LoginClient({ linkExpired = false }: { linkExpired?: boo
           Welcome to Predict <br />
           Start Moving Better in 7 days
         </h1>
+        <DemoSignIn
+          accounts={[
+            { label: "Demo patient", email: "patient@demo.predict.fit", hint: "Biological age, health domains, every biomarker, the health report" },
+          ]}
+          signIn={async (email, password) => {
+            const { error } = await authClient.signIn.email({ email, password });
+            return error ? error.message || "Could not sign in to the demo" : null;
+          }}
+          onDone={() => {
+            window.location.href = "/dashboard";
+          }}
+        />
         <Card className="w-full bg-transparent ring-0">
           <CardContent className="flex flex-col gap-4 pt-6">
             {linkExpired && (

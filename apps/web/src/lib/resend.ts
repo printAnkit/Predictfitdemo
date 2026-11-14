@@ -21,7 +21,7 @@ const demoContacts = {
 
 export const resend: { readonly contacts: Resend["contacts"] } = {
   get contacts(): Resend["contacts"] {
-    if (process.env.DEMO_MODE === "1" || process.env.NEXT_PUBLIC_DEMO_MODE === "1") {
+    if (process.env.DEMO_MODE !== "0") {
       return demoContacts as unknown as Resend["contacts"];
     }
     client ??= new Resend(process.env.RESEND_API_KEY);

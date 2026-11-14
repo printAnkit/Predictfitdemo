@@ -101,7 +101,8 @@
     "./person-notes": "./src/person-notes.ts",
     "./lead-region": "./src/lead-region.ts",
     "./demo-mode": "./src/demo-mode.ts",
-    "./demo-seed": "./src/demo-seed.ts"
+    "./demo-seed": "./src/demo-seed.ts",
+    "./demo-env": "./src/demo-env.ts"
   },
   "scripts": {
     "db:studio": "drizzle-kit studio",

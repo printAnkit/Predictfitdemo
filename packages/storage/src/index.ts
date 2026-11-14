@@ -106,7 +106,7 @@ export async function uploadFile(input: {
 
   // Demo: no bucket. The file is kept inline as a data URL (capped, so a
   // visitor cannot fill the demo database), and opens straight from the row.
-  if (process.env.DEMO_MODE === "1") {
+  if (process.env.DEMO_MODE !== "0") {
     const bytes = Buffer.from(input.body);
     if (bytes.length > 2 * 1024 * 1024) throw new Error("Uploads are limited to 2 MB in the demo.");
     return { key, url: `data:${input.contentType || "application/octet-stream"};base64,${bytes.toString("base64")}` };
@@ -130,7 +130,7 @@ export async function uploadFile(input: {
 /** Remove a file by its stored URL or key. Anything not in our bucket is left alone. */
 export async function deleteFile(urlOrKey: string | null | undefined): Promise<void> {
   if (!urlOrKey) return;
-  if (process.env.DEMO_MODE === "1" || urlOrKey.startsWith("data:")) return;
+  if (process.env.DEMO_MODE !== "0" || urlOrKey.startsWith("data:")) return;
   const key = urlOrKey.startsWith("http") ? keyFromUrl(urlOrKey) : urlOrKey;
   if (!key) return;
   await s3().send(new DeleteObjectCommand({ Bucket: bucket(), Key: key }));

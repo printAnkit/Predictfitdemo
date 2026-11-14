@@ -9,7 +9,7 @@ import { FlaskConical, LogIn, X } from "lucide-react"
  * NEXT_PUBLIC_DEMO_MODE=1, so the production build never shows them.
  */
 
-export const DEMO_ON = process.env.NEXT_PUBLIC_DEMO_MODE === "1"
+export const DEMO_ON = process.env.NEXT_PUBLIC_DEMO_MODE !== "0"
 
 /** The demo accounts' shared password — public on purpose; they only see fictional data. */
 export const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "predict-demo-2026"

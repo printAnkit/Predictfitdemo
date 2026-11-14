@@ -1,4 +1,6 @@
 import "dotenv/config";
+// Defaults for every setting, so the demo runs with no environment at all.
+import "./demo-env";
 import { Pool } from "pg";
 import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/node-postgres";
